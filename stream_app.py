@@ -47,8 +47,7 @@ with st.sidebar:
     with col1:
         st.image("image/logo-re.png", width=100)
     with col2:
-        st.markdown('<h4 style="text-align:center">Visualisasi Dataset Titanic</h4>', unsafe_allow_html=True)
-        st.header("Rumah Sakit dr.Suyoto")
+        st.markdown('<h1 style="text-align:left">Rumah Sakit <br>dr. Suyoto</h1>', unsafe_allow_html=True)
     selected = option_menu("Main Menu", ["Beranda", 'Prediksi', 'Dataset', 'Visualisasi' ,'Tentang Kami'], 
         icons=['house', 'activity', 'clipboard-data', 'graph-up' ,'info-circle'], menu_icon="cast", default_index=0)
 if selected=='Dataset':
