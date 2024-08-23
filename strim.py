@@ -96,19 +96,19 @@ if selected=='Prediksi':
     print(prediksi)
     status = ''
     if st.button("Predict", type="primary"):
-        st.write(prediksi)
+        st.header("Hasil Prediksi:")
         if(jenis_kelamin==1):
             jenis_kelamin = "Laki-laki"
         else:
             jenis_kelamin = "Perempuan"
-        df = pd.DataFrame(
-        [
-            {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "merokok": merokok, "hasil": status}
-        ]
-        )
         if (prediksi)==1:
             status = "Risiko Tinggi"
             st.warning("Kamu berisiko tinggi terkena penyakit kardiovaskular")
+            df = pd.DataFrame(
+            [
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "merokok": merokok, "hasil": status}
+            ]
+            )
             st.dataframe(df, use_container_width=True)
         elif (prediksi)==0:
             if(nama==''):
@@ -116,6 +116,11 @@ if selected=='Prediksi':
             else:
                 status = "Risiko Rendah"
                 st.success("Kamu berisiko rendah terkena penyakit kardiovaskular")
+                df = pd.DataFrame(
+                [
+                    {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "merokok": merokok, "hasil": status}
+                ]
+                )
                 st.dataframe(df, use_container_width=True)
         
 
@@ -124,3 +129,4 @@ if selected=='Tentang Kami':
     st.title("Selamat Datang Di Website Cardiovascular Care")
     st.write("This is About Page")
     st.balloons()
+    st.image("image/Heatmap.png", caption="Heatmap Correlation Features")
