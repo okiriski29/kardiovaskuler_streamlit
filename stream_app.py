@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 #Dapatkan waktu sekarang
 current_time = datetime.datetime.now()
+st.set_page_config(layout="wide")
 # ----- Pengerjaan Model -----
 data =pd.read_csv("Dataset.csv")
 print(data.head())
@@ -42,14 +43,28 @@ print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
 #Membuat Sidebar
 with st.sidebar:
-    st.image("logo-re.png", width=100)
-    selected = option_menu("Main Menu", ["Beranda", 'Prediksi', 'Tentang Kami'], 
-        icons=['house', 'activity', 'info-circle'], menu_icon="cast", default_index=0)
+    col1, col2 = st.columns([1,2])
+    with col1:
+        st.image("image/logo-re.png", width=100)
+    with col2:
+        st.markdown('<h4 style="text-align:center">Visualisasi Dataset Titanic</h4>', unsafe_allow_html=True)
+        st.header("Rumah Sakit dr.Suyoto")
+    selected = option_menu("Main Menu", ["Beranda", 'Prediksi', 'Dataset', 'Visualisasi' ,'Tentang Kami'], 
+        icons=['house', 'activity', 'clipboard-data', 'graph-up' ,'info-circle'], menu_icon="cast", default_index=0)
+if selected=='Dataset':
+    dataset = pd.read_csv('Dataset.csv')
+    st.dataframe(dataset)
+
+if selected=='Visualisasi':
+    st.title('Visualisasi Data')
+    st.header("1. Heatmap Correlation")
+    st.image("image/Heatmap.png", caption="Heatmap Correlation Features")
 #Membuat Halaman Home
 if selected=='Beranda':
     st.title("Selamat Datang Di Website Cardiovascular Care")
     st.write("This is Homepage")
     st.balloons()
+    st.write("lorem "*200)
 
 #Membuat Halaman Prediksi
 if selected=='Prediksi':
@@ -71,18 +86,20 @@ if selected=='Prediksi':
     with col3:
         umur = st.text_input("Umur Anda", calculate_age(born), disabled=True)
         umur = int(umur)
-        berat_badan=st.number_input("Berat Badan",value=None, min_value=40,max_value=150,step=1)
-        kolesterol = st.selectbox("Kolesterol", options, format_func=lambda x: option[x])
-        merokok = st.selectbox("Merokok", options, format_func=lambda x: option[x])
-    with col4:
         jenis_kelamin = st.selectbox("Jenis Kelamin", options, format_func=lambda x: jk[x])
-        sistolik = st.number_input("Tekanan Sistolik",value=None, min_value=70,max_value=250,step=10)
+        tinggi_badan = st.number_input("Tinggi Badan",value=None, min_value=125,max_value=565,step=1, placeholder="(cm)")
+        berat_badan=st.number_input("Berat Badan",value=None, min_value=40,max_value=150,step=1, placeholder="(kg)")
+        
+    with col4:
+        sistolik = st.number_input("Tekanan Sistolik",value=None, min_value=70,max_value=250,step=10, placeholder="(mmHg)")
+        diastolik = st.number_input("Tekanan Diastolik",value=None, min_value=40,max_value=160,step=10, placeholder="(mmHg)")
+        kolesterol = st.selectbox("Kolesterol", options, format_func=lambda x: option[x])
         diabetes = st.selectbox("Diabetes", options, format_func=lambda x: option[x])
-        olahraga = st.selectbox("Olahraga", options, format_func=lambda x: option[x])
+       
     with col5:
-        tinggi_badan = st.number_input("Tinggi Badan",value=None, min_value=125,max_value=565,step=1)
-        diastolik = st.number_input("Tekanan Diastolik",value=None, min_value=40,max_value=160,step=10)
         riwayat = st.selectbox("Riwayat Keluarga", options, format_func=lambda x: option[x])
+        merokok = st.selectbox("Merokok", options, format_func=lambda x: option[x])
+        olahraga = st.selectbox("Olahraga", options, format_func=lambda x: option[x])
     #Membuat Prediksi Pada Masukan
     input_data = (umur,jenis_kelamin,tinggi_badan,berat_badan,sistolik,diabetes,kolesterol,diabetes,riwayat,merokok,olahraga)
     print(input_data)
@@ -99,12 +116,33 @@ if selected=='Prediksi':
             jenis_kelamin = "Laki-laki"
         else:
             jenis_kelamin = "Perempuan"
+        if(kolesterol==1):
+            kolesterol = "Iya"
+        else:
+            kolesterol = "Tidak"
+        if(diabetes==1):
+            diabetes = "Iya"
+        else:
+            diabetes = "Tidak"
+        if(riwayat==1):
+            riwayat = "Iya"
+        else:
+            riwayat = "Tidak"
+        if(merokok==1):
+            merokok = "Iya"
+        else:
+            merokok = "Tidak"
+        if(olahraga==1):
+            olahraga = "Iya"
+        else:
+            olahraga = "Tidak"
+        
         if (prediksi)==1:
             status = "Risiko Tinggi"
             st.warning("Kamu berisiko tinggi terkena penyakit kardiovaskular")
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "merokok": merokok, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
             st.dataframe(df, use_container_width=True)
@@ -116,7 +154,7 @@ if selected=='Prediksi':
                 st.success("Kamu berisiko rendah terkena penyakit kardiovaskular")
                 df = pd.DataFrame(
                 [
-                    {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "merokok": merokok, "hasil": status}
+                    {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
                 ]
                 )
                 st.dataframe(df, use_container_width=True)
@@ -127,4 +165,4 @@ if selected=='Tentang Kami':
     st.title("Selamat Datang Di Website Cardiovascular Care")
     st.write("This is About Page")
     st.balloons()
-    st.image("image/Heatmap.png", caption="Heatmap Correlation Features")
+    
