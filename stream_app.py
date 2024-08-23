@@ -26,9 +26,7 @@ scaler = StandardScaler()
 scaler.fit(X.values)
 data_standar = scaler.transform(X)
 x=data_standar
-print(x)
 y=Y
-print(y)
 #performing train-test split on the data
 x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=1)
 #creating an object for the model for further usage
