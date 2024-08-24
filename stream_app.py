@@ -6,8 +6,6 @@ import datetime
 import time
 from datetime import date, timedelta
 from streamlit_option_menu import option_menu
-from openai import OpenAI
-import openai
 #Import Library untuk Klasifikasi
 from sklearn import metrics
 from sklearn.preprocessing import StandardScaler
