@@ -17,8 +17,8 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 current_time = datetime.datetime.now()
 st.set_page_config(layout="wide")
 # ----- Pengerjaan Model -----
-data =pd.read_csv("Dataset.csv")
-print(data.head())
+data =pd.read_csv("Dataset Kardio.csv")
+print(data.tail())
 #cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
 X = data.drop(columns=['kardiovaskular'], axis=1)
 Y = data['kardiovaskular']
@@ -28,9 +28,9 @@ data_standar = scaler.transform(X)
 x=data_standar
 y=Y
 #performing train-test split on the data
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=1)
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
 #creating an object for the model for further usage
-classifier=RandomForestClassifier(n_estimators=100, random_state=1)
+classifier=RandomForestClassifier(n_estimators=100, random_state=0)
 #fitting the model with train data (x3_train & y3_train)
 classifier.fit(x_train,y_train)
 y_pred = classifier.predict(x_test)
