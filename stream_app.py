@@ -67,7 +67,7 @@ if selected=='Dataset':
     dataset = pd.read_csv('Dataset.csv')
     st.dataframe(dataset)
     st.download_button("Download Dataset", data='Dataset.csv', file_name="Dataset.csv", type='primary')
-
+    st.write("Akurasi dataset ini adalah ", metrics.accuracy_score(y_test, y_pred))
 if selected=='Visualisasi':
     st.title(':chart_with_upwards_trend: Visualisasi Data ')
     st.header("1. Heatmap Correlation")
