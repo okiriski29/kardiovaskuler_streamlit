@@ -8,7 +8,8 @@ from datetime import date, timedelta
 from streamlit_option_menu import option_menu
 #Import Library untuk Klasifikasi
 from sklearn import metrics
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
@@ -20,20 +21,22 @@ st.set_page_config(layout="wide")
 data =pd.read_csv("Dataset Kardio.csv")
 print(data.tail())
 #cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
-X = data.drop(columns=['kardiovaskular'], axis=1)
-Y = data['kardiovaskular']
-scaler = StandardScaler()
-scaler.fit(X)
-data_standar = scaler.transform(X)
-x=data_standar
-y=Y
+x = data.drop(columns=['kardiovaskular'], axis=1)
+y = data['kardiovaskular']
 #performing train-test split on the data
 x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
 #creating an object for the model for further usage
-classifier=RandomForestClassifier(n_estimators=100, random_state=0)
+pipeline = Pipeline([
+    ('scaler', MinMaxScaler()),
+    ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
+])
 #fitting the model with train data (x3_train & y3_train)
-classifier.fit(x_train,y_train)
-y_pred = classifier.predict(x_test)
+model = pipeline.fit(x_train, y_train)
+y_pred = pipeline.predict(x_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.3f}")
 cm = confusion_matrix(y_test, y_pred)
 print(classification_report(y_test, y_pred))
 print(cm)
@@ -64,7 +67,7 @@ if selected=='Informasi':
     
 if selected=='Dataset':
     st.subheader("Dataset Kardiovaskular")
-    dataset = pd.read_csv('Dataset.csv')
+    dataset = pd.read_csv('Dataset Kardio.csv')
     st.dataframe(dataset)
     st.download_button("Download Dataset", data='Dataset.csv', file_name="Dataset.csv", type='primary')
     st.write("Akurasi dataset ini adalah ", metrics.accuracy_score(y_test, y_pred))
@@ -120,9 +123,7 @@ if selected=='Prediksi':
     print(input_data)
     input_data_as_numpy_array = np.array(input_data) 
     input_data_reshape = input_data_as_numpy_array.reshape(1,-1)
-    std_data = scaler.transform(input_data_reshape)
-    print(std_data)
-    prediksi = classifier.predict(std_data)
+    prediksi = model.predict(input_data_reshape)
     print(prediksi)
     status = ''
     if st.button("Prediksi", type="primary"):
