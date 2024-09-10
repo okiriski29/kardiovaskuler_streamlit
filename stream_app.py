@@ -70,7 +70,9 @@ if selected=='Dataset':
     dataset = pd.read_csv('Dataset Kardio.csv')
     st.dataframe(dataset)
     st.download_button("Download Dataset", data='Dataset.csv', file_name="Dataset.csv", type='primary')
-    st.write("Akurasi dataset ini adalah ", metrics.accuracy_score(y_test, y_pred))
+    st.write("Akurasi dataset ini sebesar ", metrics.accuracy_score(y_test, y_pred))
+    st.success('This is a success message!', icon="✅")
+
 if selected=='Visualisasi':
     st.title(':chart_with_upwards_trend: Visualisasi Data ')
     st.header("1. Heatmap Correlation")
@@ -157,7 +159,7 @@ if selected=='Prediksi':
             with st.spinner('Sedang Memprediksi...'):
                 time.sleep(3)
             st.subheader("Hasil Prediksi :")
-            st.error("Kamu berisiko tinggi terkena penyakit kardiovaskular")
+            st.error("Kamu berisiko tinggi terkena penyakit kardiovaskular", icon='🚨')
             df = pd.DataFrame(
             [
                 {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
@@ -172,7 +174,7 @@ if selected=='Prediksi':
                 with st.spinner('Sedang Memprediksi...'):
                     time.sleep(3)
                 st.subheader("Hasil Prediksi :")
-                st.success("Kamu berisiko rendah terkena penyakit kardiovaskular")
+                st.success("Kamu berisiko rendah terkena penyakit kardiovaskular", icon='💚')
                 df = pd.DataFrame(
                 [
                     {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
