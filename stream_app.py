@@ -54,7 +54,7 @@ with st.sidebar:
         icons=['house', 'chat-heart', 'activity', 'clipboard-data', 'graph-up', 'person-circle'], menu_icon="cast", default_index=0)
 #Membuat Halaman Home
 if selected=='Beranda':
-    st.title("Selamat Datang Di Website Cardiovascular Care :anatomical_heart:")
+    st.title("Selamat Datang Di Website Cardiovascular Care 🫀")
     st.html("<h2> Kardiovaskular </h2>")
     st.balloons()
 if selected=='Informasi':
