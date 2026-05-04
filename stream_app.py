@@ -56,7 +56,6 @@ with st.sidebar:
 if selected=='Beranda':
     st.title("Selamat Datang Di Website Cardiovascular Care :anatomical_heart:")
     st.html("<h2> Kardiovaskular </h2>")
-    st.html("")
     st.balloons()
 if selected=='Informasi':
     st.header("Informasi Terkait Penyakit Kardiovaskular")
