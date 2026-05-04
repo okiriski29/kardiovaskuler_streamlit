@@ -11,7 +11,6 @@ from sklearn import metrics
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 #Dapatkan waktu sekarang
@@ -21,7 +20,7 @@ st.set_page_config(layout="wide")
 data =pd.read_csv("Dataset Kardio.csv")
 print(data.tail())
 #cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
-x = data.drop(columns=['kardiovaskular'], axis=1)
+x = data.drop(columns=['kardiovaskular'])
 y = data['kardiovaskular']
 #performing train-test split on the data
 x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
