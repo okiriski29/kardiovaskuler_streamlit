@@ -13,17 +13,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
 #Dapatkan waktu sekarang
 current_time = datetime.datetime.now()
 st.set_page_config(layout="wide")
+
 # ----- Pengerjaan Model -----
-data =pd.read_csv("Dataset Kardio.csv")
+data =pd.read_csv("Data Terbaru.csv")
 print(data.tail())
 #cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
-x = data.drop(columns=['kardiovaskular'])
-y = data['kardiovaskular']
+x = data.drop(columns=['kardio'])
+y = data['kardio']
 #performing train-test split on the data
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
 #creating an object for the model for further usage
 pipeline = Pipeline([
     ('scaler', MinMaxScaler()),
@@ -79,7 +81,7 @@ if selected=='Informasi':
     st.html("<ol class='faktor'><li>Tekanan darah tinggi</li><li>Kolesterol tinggi</li><li>Diabetes</li><li>Obesitas(Berat badan berlebih)</li><li>Riwayat Keluarga yang pernah terkena kardiovaskular</li><li>Merokok</li><li>Kurangnya aktivitas fisik</li></ol> ")
 if selected=='Dataset':
     st.subheader("Dataset Kardiovaskular")
-    dataset = pd.read_csv('Dataset Kardio.csv')
+    dataset = pd.read_csv('Data Terbaru.csv')
     st.dataframe(dataset)
     st.download_button("Download Dataset", data='Dataset.csv', file_name="Dataset.csv", type='primary')
     st.write(f"Akurasi dataset ini sebesar **{accuracy:.3f}**")
@@ -127,12 +129,18 @@ if selected=='Prediksi':
         merokok = st.selectbox("Merokok", options, format_func=lambda x: option[x])
         olahraga = st.selectbox("Olahraga", options, format_func=lambda x: option[x])
     #Membuat Prediksi Pada Masukan
-    input_data = (umur,jenis_kelamin,tinggi_badan,berat_badan,sistolik,diabetes,kolesterol,diabetes,riwayat,merokok,olahraga)
+    input_data = (umur,jenis_kelamin,tinggi_badan,berat_badan,sistolik,diastolik,kolesterol,diabetes,riwayat,merokok,olahraga)
     print(input_data)
     input_data_as_numpy_array = np.array(input_data) 
     input_data_reshape = input_data_as_numpy_array.reshape(1,-1)
     prediksi = model.predict(input_data_reshape)
     print(prediksi)
+    probabilitas = model.predict_proba(input_data_reshape)
+    print("Probabilitas:", probabilitas)
+
+    # Menampilkan lebih jelas
+    print(f"Probabilitas Tidak: {probabilitas[0][0]:.4f}")
+    print(f"Probabilitas Iya  : {probabilitas[0][1]:.4f}")
     status = ''
     if st.button("Prediksi", type="primary"):
         if(jenis_kelamin==1):
@@ -159,7 +167,6 @@ if selected=='Prediksi':
             olahraga = "Iya"
         else:
             olahraga = "Tidak"
-        
         if(nama==''):
             st.warning('Data belum diinput', icon="⚠️")
         elif (prediksi)==1:
@@ -170,7 +177,7 @@ if selected=='Prediksi':
             st.error("Kamu berisiko tinggi terkena penyakit kardiovaskular", icon='🚨')
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
             st.dataframe(df, use_container_width=True)
@@ -182,7 +189,7 @@ if selected=='Prediksi':
             st.success("Kamu berisiko rendah terkena penyakit kardiovaskular", icon='💚')
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
             st.dataframe(df, use_container_width=True)
