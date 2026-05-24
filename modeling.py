@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 data =pd.read_csv("Kardio.csv")
 print(data.head())
 #cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
-X = data.drop(columns=['kardio'], axis=1)
+X = data.drop(columns=['kardio'])
 y = data['kardio']
 # ----- 3. Split Data ----- #
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
