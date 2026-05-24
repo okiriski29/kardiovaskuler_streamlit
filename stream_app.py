@@ -4,101 +4,499 @@ import numpy as np
 import pandas as pd
 import datetime
 import time
+import pickle
 from datetime import date, timedelta
 from streamlit_option_menu import option_menu
-#Import Library untuk Klasifikasi
-from sklearn import metrics
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-
+from modeling import final_accuracy
 #Dapatkan waktu sekarang
 current_time = datetime.datetime.now()
 st.set_page_config(layout="wide")
-
-# ----- Pengerjaan Model -----
-data =pd.read_csv("Data Terbaru.csv")
-print(data.tail())
-#cleaning the data by dropping unneccessary column and dividing the data as features(x3) & target(y3)
-x = data.drop(columns=['kardio'])
-y = data['kardio']
-#performing train-test split on the data
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
-#creating an object for the model for further usage
-pipeline = Pipeline([
-    ('scaler', MinMaxScaler()),
-    ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
-])
-#fitting the model with train data (x3_train & y3_train)
-model = pipeline.fit(x_train, y_train)
-y_pred = pipeline.predict(x_test)
-
-# Evaluate the model
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy:.3f}")
-cm = confusion_matrix(y_test, y_pred)
-print(classification_report(y_test, y_pred))
-print(cm)
-
-print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
-# ------ Batas Pengerjaan Model -----
-
+# Membuka dan memuat model
+with open('modelkardio.pkl', 'rb') as file:
+    model = pickle.load(file)
 #Membuat Sidebar
 with st.sidebar:
-    col1, col2 = st.columns([1,2])
-    with col1:
-        st.image("image/logo-re.png", width=100)
-    with col2:
-        st.markdown('<h1 style="text-align:left">Rumah Sakit <br>dr. Suyoto</h1>', unsafe_allow_html=True)
-    selected = option_menu("Main Menu", ["Beranda",'Informasi', 'Prediksi', 'Dataset', 'Visualisasi' , 'Tentang Kami'], 
-        icons=['house', 'chat-heart', 'activity', 'clipboard-data', 'graph-up', 'person-circle'], menu_icon="cast", default_index=0)
+    st.image("logo.png")
+    selected = option_menu("Main Menu", ["🏠 Beranda",'📖 Informasi', '🩺 Prediksi', '💾 Dataset', '📊 Visualisasi'], 
+        icons=['none', 'none', 'none', 'none', 'none'], menu_icon="cast", default_index=0)
 #Membuat Halaman Home
-if selected=='Beranda':
-    st.title("Selamat Datang Di Website Cardiovascular Care 🫀")
-    st.html("<h2> Kardiovaskular </h2>")
-    st.balloons()
-if selected=='Informasi':
-    st.header("Informasi Terkait Penyakit Kardiovaskular")
-    st.html("<h3>Kardiovaskular</h3>")
-    st.html("<style> p{ font-size:24px; margin:0px 20px; text-align: justify;} .fs li{background-color:#FFBE98}</style>")
-    st.html("<p>Kardiovaskular adalah istilah yang merujuk pada sistem jantung dan pembuluh darah, serta penyakit yang berkaitan dengannya. Kardiovaskular merupakan sebuah kondisi di mana terjadi penyempitan atau penyumbatan pembuluh darah yang dapat menyebabkan serangan jantung, nyeri dada (angina), atau stroke. Penyakit kardiovaskuler termasuk kondisi kritis yang butuh penanganan segera. Pasalnya, jantung adalah organ vital yang berfungsi untuk memompa darah ke seluruh tubuh. Jika jantung bermasalah, peredaran darah dalam tubuh bisa terganggu. Tanpa pertolongan medis yang sesuai, penyakit kardiovaskuler bisa mengancam jiwa dan menyebabkan kematian.</p>")
-    st.html("<p>Sistem kardiovaskular berfungsi untuk memompa darah ke seluruh tubuh, sehingga sel-sel tubuh dapat mendapatkan oksigen dan nutrisi yang dibutuhkan. Organ-organ yang membentuk sistem kardiovaskular, antara lain:</p>")
-    st.html("<ul class='fs'><li>Jantung, yang merupakan pompa berotot yang mendorong darah ke seluruh tubuh</li><li>Arteri, yang membawa darah dari jantung</li><li>Vena, yang membawa darah kembali ke jantung</li><li>Kapiler, yang merupakan pembuluh kecil yang bercabang dari arteri untuk mengalirkan darah ke seluruh jaringan tubuh</li></ul>")
-    st.html("<p> Faktor risiko perilaku terpenting dari penyakit jantung dan stroke adalah pola makan yang tidak sehat, kurangnya aktivitas fisik, penggunaan tembakau, dan penggunaan alkohol yang berbahaya. Di antara faktor risiko lingkungan, polusi udara merupakan faktor penting. Dampak faktor risiko perilaku dapat muncul pada individu sebagai tekanan darah tinggi, kadar glukosa darah tinggi, kadar lemak darah tinggi, serta kelebihan berat badan dan obesitas. Faktor risiko menengah ini dapat diukur di fasilitas layanan kesehatan masyarakat dan menunjukkan peningkatan risiko serangan jantung, stroke, gagal jantung, dan komplikasi lainnya.</p>")
-    st.html("<p>Penghentian penggunaan tembakau, pengurangan garam dalam makanan, makan lebih banyak buah dan sayur, aktivitas fisik teratur, dan menghindari penggunaan alkohol yang berbahaya telah terbukti dapat mengurangi risiko penyakit kardiovaskular. Kebijakan kesehatan yang menciptakan lingkungan yang mendukung agar pilihan sehat terjangkau dan tersedia, serta meningkatkan kualitas udara dan mengurangi polusi, sangat penting untuk memotivasi orang agar mengadopsi dan mempertahankan perilaku sehat.</p>")
-    st.html("<p>Mengidentifikasi mereka yang berisiko tinggi terkena penyakit kardiovaskular dan memastikan mereka menerima perawatan yang tepat dapat mencegah kematian dini. Akses terhadap obat-obatan penyakit tidak menular dan teknologi kesehatan dasar di semua fasilitas kesehatan masyarakat sangat penting untuk memastikan bahwa mereka menerima perawatan dan konseling yang tepat mengenai penyakit ini.</p>")
-    st.html("<h3>Ancaman Penyakit Kardiovaskular</h3>")
-    st.html("<p>Penyakit kardiovaskular masih menjadi ancaman dunia dan merupakan penyakit yang berperan utama sebagai penyebab kematian nomor satu di seluruh dunia. Data Organisasi Kesehatan Dunia (WHO) menyebutkan, lebih dari 17 juta orang di dunia meninggal akibat penyakit jantung dan pembuluh darah. Sedangkan sebagai perbandingan, HIV / AIDS, malaria dan TBC secara keseluruhan membunuh 3 juta populasi dunia. Berdasarkan data Riset Kesehatan Dasar (Riskesdas) tahun 2018, angka kejadian penyakit jantung dan pembuluh darah semakin meningkat dari tahun ke tahun. Setidaknya, 15 dari 1000 orang, atau sekitar 2.784.064 individu di Indonesia menderita penyakit jantung.</p>")
-    st.html("<p>Penyakit kardiovaskular merupakan masalah kesehatan di negara maju maupun berkembang. Kementerian Kesehatan menyatakan, masyarakat perlu melakukan cek kesehatan berkala, menghindari perilaku merokok, rajin beraktivitas fisik, menerapkan pola makan seimbang, istirahat yang cukup, dan mengelola stres. Selain itu, masyarakat juga diimbau melakukan pengukuran tekanan darah dan rutin melakukan pemeriksaan kolesterol minimal satu tahun sekali.(Katadata)</p>")
-    st.html("<h3>Fakta Penting</h3>")
-    st.html("<style>h3{ margin-left: 50px} li, p{ font-size: 24px; text-align:justify; margin:8px 100px} ul li {background: #d4e9ff;;padding: 10px;border-radius: 10px;} ol li{background: #d7fcde;padding: 10px;border-radius: 10px;}  .faktor li{background: #fae4d9; padding: 10px;border-radius: 10px;} @media only screen and (min-width: 1280px) {.faktor{margin-right:500px}}</style>")
-    st.html("<ul><li>Penyakit kardiovaskular merupakan penyebab kematian utama secara global.</li><li>Diperkirakan 17,9 juta orang meninggal akibat penyakit kardiovaskular pada tahun 2019, yang merupakan 32% dari seluruh kematian global. Dari jumlah tersebut, 85% disebabkan oleh serangan jantung dan stroke.</li><li>Lebih dari tiga perempat kematian akibat CVD terjadi di negara berpenghasilan rendah dan menengah.</li><li>Dari 17 juta kematian dini (di bawah usia 70) akibat penyakit tidak menular pada tahun 2019, 38% disebabkan oleh penyakit kardiovaskular.</li><li>Sebagian besar penyakit kardiovaskular dapat dicegah dengan menangani faktor risiko perilaku dan lingkungan seperti penggunaan tembakau, pola makan tidak sehat dan obesitas, kurangnya aktivitas fisik, penggunaan alkohol yang berbahaya, dan polusi udara.</li><li>Penting untuk mendeteksi penyakit kardiovaskular sedini mungkin sehingga penanganan dengan konseling dan pengobatan dapat dimulai.</li></ul> ")
-    st.html("<h3>Jenis-jenis Penyakit Kardiovaskular</h3>")
-    st.html("<ol><li><b>Jantung Koroner -</b> Penyakit jantung koroner terjadi ketika aliran darah kaya oksigen ke otot jantung tersumbat atau berkurang.</li><li><b>Stroke -</b> Stroke adalah kondisi saat suplai darah ke bagian otak terputus, yang dapat menyebabkan kerusakan otak dan kemungkinan kematian.</li><li><b>Aritmia -</b> Kondisi ini terjadi ketika detak jantung berlangsung dengan tidak teratur. Detak jantung bisa terjadi dengan sangat cepat atau sangat lambat.</li><li><b>Serangan Jantung -</b> Serangan jantung bisa terjadi akibat terputusnya aliran darah menuju otot jantung secara tiba-tiba.</li><li><b>Gagal Jantung -</b> Kondisi ini terjadi ketika jantung tidak mampu memompa darah untuk memenuhi kebutuhan tubuh.</li></ol> ")
-    st.html("<h3>Faktor Risiko Penyebab Penyakit Kardiovaskular</h3>")
-    st.html("<ol class='faktor'><li>Tekanan darah tinggi</li><li>Kolesterol tinggi</li><li>Diabetes</li><li>Obesitas(Berat badan berlebih)</li><li>Riwayat Keluarga yang pernah terkena kardiovaskular</li><li>Merokok</li><li>Kurangnya aktivitas fisik</li></ol> ")
-if selected=='Dataset':
-    st.subheader("Dataset Kardiovaskular")
-    dataset = pd.read_csv('Data Terbaru.csv')
-    st.dataframe(dataset)
-    st.download_button("Download Dataset", data='Dataset.csv', file_name="Dataset.csv", type='primary')
-    st.write(f"Akurasi dataset ini sebesar **{accuracy:.3f}**")
-    st.success('This is a success message!', icon="✅")
+if selected=='🏠 Beranda':
+    # --- HALAMAN BERANDA ---
+    # Teks header utama sesuai gambar Anda
+    st.markdown("# Selamat Datang Di Website Cardiovascular Care 🫀")
+    st.write("---")
 
-if selected=='Visualisasi':
+    # 1. Ringkasan Pengantar (Hero Section)
+    st.markdown("""
+    Sistem berbasis kecerdasan buatan (*Machine Learning*) ini dirancang untuk membantu Anda 
+    melakukan deteksi dini dan penilaian mandiri terhadap risiko penyakit kardiovaskular (jantung dan pembuluh darah). 
+    Sistem bekerja dengan menganalisis kombinasi data kesehatan, seperti tekanan darah, kadar kolesterol, gula darah, 
+    riwayat penyakit keluarga, serta pola gaya hidup sehari-hari, termasuk aktivitas fisik dan kebiasaan merokok. 
+    Hasil evaluasi yang diberikan dapat membantu pengguna memahami tingkat risiko kardiovaskular sehingga dapat melakukan langkah pencegahan dan menjaga kesehatan jantung lebih awal.
+    """)
+    st.markdown("""
+    <style>
+    .metric-container{
+    display:flex;
+    gap:20px;
+    margin-top:20px;
+    margin-bottom:25px;
+    }
+
+    .metric-card{
+        flex:1;
+        background: linear-gradient(135deg,#0F4C81,#1F78D1);
+        padding:35px 25px;
+        border-radius:25px;
+        color:white;
+        text-align:center;
+        position:relative;
+        overflow:hidden;
+        transition:0.3s;
+        box-shadow:0px 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .metric-card:hover{
+        transform:translateY(-8px);
+        box-shadow:0px 12px 25px rgba(0,0,0,0.25);
+    }
+
+    .metric-card::before{
+        content:'';
+        position:absolute;
+        width:180px;
+        height:180px;
+        background:rgba(255,255,255,0.08);
+        border-radius:50%;
+        top:-60px;
+        right:-60px;
+    }
+
+    .metric-icon{
+        font-size:50px;
+        margin-bottom:10px;
+    }
+
+    .metric-value{
+        font-size:42px;
+        font-weight:bold;
+        margin-bottom:10px;
+    }
+
+    .metric-title{
+        font-size:20px;
+        font-weight:600;
+        margin-bottom:8px;
+    }
+
+    .metric-desc{
+        font-size:15px;
+        opacity:0.9;
+        line-height:1.6;
+    }
+
+    </style>
+    <div class="metric-container">
+
+    <div class="metric-card">
+        <div class="metric-icon">🌍</div>
+        <div class="metric-value">#1</div>
+        <div class="metric-title">Penyebab Kematian Global dan Nasional</div>
+        <div class="metric-desc">
+            Penyakit Kardiovaskular Menjadi Penyebab Kematian Tertinggi Di Dunia dan Di Indonesia.
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon">🩺</div>
+        <div class="metric-value">0</div>
+        <div class="metric-title">Deteksi Dini</div>
+        <div class="metric-desc">
+            Tidak Adanya Fasilitas Deteksi Dini Penyakit Kardiovaskular pada Masyarakat
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon">🚨</div>
+        <div class="metric-value">19,8 Juta</div>
+        <div class="metric-title">Kematian</div>
+        <div class="metric-desc">Rantai Kematian Akibat Penyakit Kardiovaskular Harus Diputus</div>
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+    st.write("---")
+
+    # 3. Panduan Alur Penggunaan Aplikasi
+    st.markdown("### 🧭 Cara Melakukan Cek Risiko Kardiovaskular:")
+
+    col_step1, col_step2, col_step3 = st.columns(3)
+
+    with col_step1:
+        st.info("""
+        **1. Pilih Menu Prediksi**
+        Buka panel menu di samping kiri layar (*sidebar*), lalu klik menu **🩺 Prediksi**.
+        """)
+
+    with col_step2:
+        st.info("""
+        **2. Isi Data Kesehatan**
+        Masukkan parameter tubuh Anda secara akurat (seperti data tekanan darah, kolesterol, dan gaya hidup).
+        """)
+
+    with col_step3:
+        st.info("""
+        **3. Lihat Hasil Evaluasi**
+        Tekan tombol prediksi untuk melihat hasil analisis risiko beserta rangkuman data riwayat Anda.
+        """)
+
+    st.write("---")
+
+    # 4. Edukasi Singkat Mengenai Faktor Risiko
+    with st.expander("💡 Pelajari Faktor Risiko Utama Penyakit Jantung dan Pembuluh Darah(Kardiovaskular)"):
+        st.markdown("""
+        Penyakit kardiovaskular sering kali berkembang tanpa gejala awal yang disadari. Berikut adalah parameter kritis yang perlu Anda pantau:
+        * **Tekanan Darah Tinggi (Hipertensi):** Beban kerja berlebih pada pembuluh darah memperbesar risiko kerusakan arteri.
+        * **Kadar Kolesterol Tinggi:** Dapat memicu penumpukan plak (aterosklerosis) yang menyumbat aliran darah ke jantung.
+        * **Diabetes:** Kadar gula darah tinggi dapat merusak pembuluh darah dan meningkatkan risiko penyakit jantung.
+        * **Riwayat Keluarga:** Faktor genetik dari keluarga dengan riwayat penyakit jantung dapat meningkatkan risiko kardiovaskular.
+        * **Obesitas:** Berat badan berlebih membuat kerja jantung lebih berat dan meningkatkan risiko hipertensi serta kolesterol tinggi.
+        * **Gaya Hidup:** Merokok, kurang aktivitas fisik (olahraga)
+        """)
+
+    # 5. Catatan / Disclaimer Medis Khas Aplikasi Kesehatan
+    st.warning("""
+    ⚠️ **Catatan Penting:** Hasil dari aplikasi ini bersifat sebagai skrining awal/edukasi 
+    dan tidak menggantikan diagnosis medis formal dari dokter spesialis Jantung dan Pembuluh Darah. Jika Anda merasakan gejala nyeri dada atau sesak napas, 
+    segera hubungi layanan medis darurat atau fasilitas kesehatan terdekat.
+    """)
+
+    st.balloons()
+if selected=='📖 Informasi':
+    st.markdown("""
+    <style>
+    .main-card{
+        background: linear-gradient(135deg,#ffffff,#f5f9ff);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .title{
+        text-align:center;
+        font-size:38px;
+        font-weight:bold;
+        color:#0B3C5D;
+        margin-bottom:10px;
+    }
+
+    .subtitle{
+        text-align:center;
+        font-size:18px;
+        color:#555;
+        margin-bottom:30px;
+    }
+
+    .info-box{
+        background:#FFE7D1;
+        padding:15px;
+        border-radius:12px;
+        margin-bottom:12px;
+        font-size:17px;
+        color:#333;
+        border-left:6px solid #FF914D;
+    }
+
+    .section-title{
+        font-size:28px;
+        font-weight:bold;
+        color:#0B3C5D;
+        margin-top:20px;
+        margin-bottom:15px;
+    }
+
+    .paragraph{
+        text-align:justify;
+        font-size:17px;
+        line-height:1.9;
+        color:#333;
+    }
+
+    .warning{
+        background:linear-gradient(135deg,#ffefef,#ffe3e3);
+        padding:20px;
+        border-radius:15px;
+        border-left:7px solid red;
+        margin-top:20px;
+    }
+
+    .footer{
+        background:#E8F4FF;
+        padding:18px;
+        border-radius:15px;
+        margin-top:25px;
+        font-size:16px;
+        color:#333;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="main-card">
+
+    <div class="title">
+    🫀 Informasi Terkait Penyakit Kardiovaskular
+    </div>
+
+    <div class="subtitle">
+    Kenali faktor risiko dan pentingnya menjaga kesehatan jantung sejak dini
+    </div>
+
+    <div class="section-title">
+    📖 Apa Itu Kardiovaskular?
+    </div>
+
+    <div class="paragraph">
+    Kardiovaskular adalah istilah yang merujuk pada sistem jantung dan pembuluh darah, serta penyakit yang berkaitan dengannya. Kardiovaskular merupakan sebuah kondisi di mana terjadi penyempitan atau penyumbatan pembuluh darah yang dapat menyebabkan serangan jantung, nyeri dada (angina), atau stroke. Penyakit kardiovaskuler termasuk kondisi kritis yang butuh penanganan segera. Pasalnya, jantung adalah organ vital yang berfungsi untuk memompa darah ke seluruh tubuh. Jika jantung bermasalah, peredaran darah dalam tubuh bisa terganggu. Tanpa pertolongan medis yang sesuai, penyakit kardiovaskuler bisa mengancam jiwa dan menyebabkan kematian.
+    </div>
+
+    <br>
+
+    <div class="section-title">
+    🔍 Organ Utama Sistem Kardiovaskular
+    </div>
+
+    <div class="info-box">
+    ❤️ <b>Jantung</b> → Memompa darah ke seluruh tubuh
+    </div>
+
+    <div class="info-box">
+    🩸 <b>Arteri</b> → Membawa darah dari jantung
+    </div>
+
+    <div class="info-box">
+    🔄 <b>Vena</b> → Mengalirkan darah kembali ke jantung
+    </div>
+
+    <div class="info-box">
+    🌐 <b>Kapiler</b> → Pembuluh darah kecil untuk distribusi oksigen dan nutrisi
+    </div>
+    <div class="section-title">
+    🧬 Jenis-Jenis Penyakit Kardiovaskular
+    </div>
+
+    <div class="info-box">
+    ❤️‍🩹 <b>Jantung Koroner</b> →  Penyakit jantung koroner terjadi ketika aliran darah kaya oksigen ke otot jantung tersumbat atau berkurang
+    </div>
+
+    <div class="info-box">
+    🧠 <b>Stroke</b> → - Stroke adalah kondisi saat suplai darah ke bagian otak terputus, yang dapat menyebabkan kerusakan otak dan kemungkinan kematian
+    </div>
+
+    <div class="info-box">
+    💗 <b>Aritmia</b> → Kondisi ini terjadi ketika detak jantung berlangsung dengan tidak teratur. Detak jantung bisa terjadi dengan sangat cepat atau sangat lambat
+    </div>
+
+    <div class="info-box">
+    💔 <b>Serangan Jantung</b> → Serangan jantung bisa terjadi akibat terputusnya aliran darah menuju otot jantung secara tiba-tiba
+    </div>
+
+    <div class="info-box">
+    🫀 <b>Gagal Jantung</b> → Kondisi ini terjadi ketika jantung tidak mampu memompa darah untuk memenuhi kebutuhan tubuh
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ================= CSS =================
+    st.markdown("""
+    <style>
+
+    .main {
+        background-color: #f5f7fb;
+    }
+
+    .hero{
+        background: linear-gradient(135deg,#0F4C81,#1F78D1);
+        padding: 45px;
+        border-radius: 25px;
+        color: white;
+        text-align:center;
+        margin-bottom:30px;
+        box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .hero h1{
+        font-size:48px;
+        margin-bottom:10px;
+    }
+
+    .hero p{
+        font-size:19px;
+        line-height:1.8;
+    }
+
+    .card{
+        background:white;
+        padding:25px;
+        border-radius:20px;
+        box-shadow:0px 4px 12px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    }
+
+    .card-title{
+        font-size:30px;
+        font-weight:bold;
+        color:#0F4C81;
+        margin-bottom:15px;
+    }
+
+    .text{
+        font-size:17px;
+        text-align:justify;
+        line-height:1.9;
+        color:#333;
+    }
+
+    .info-box{
+        background:#FFF3E8;
+        padding:18px;
+        border-radius:15px;
+        margin-bottom:15px;
+        border-left:6px solid #FF914D;
+        font-size:17px;
+    }
+
+    .risk-card{
+        background:linear-gradient(135deg,#FFECEC,#FFF5F5);
+        padding:20px;
+        border-radius:18px;
+        margin-bottom:15px;
+        border-left:7px solid #E53935;
+    }
+
+    .prevention{
+        background:linear-gradient(135deg,#E8FFF1,#F4FFF8);
+        padding:20px;
+        border-radius:18px;
+        border-left:7px solid #2EAF62;
+        margin-top:10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ================= METRIC =================
+    
+    # ================= FAKTOR RISIKO =================
+    st.markdown("""
+    <div class="card">
+
+    <div class="card-title">
+    ⚠️ Faktor Risiko Penyakit Kardiovaskular
+    </div>
+
+    <div class="risk-card">
+    <b>Tekanan Darah Tinggi (Hipertensi)</b><br>
+    Tekanan darah tinggi membuat jantung bekerja lebih keras dan meningkatkan risiko kerusakan pembuluh darah.
+    </div>
+
+    <div class="risk-card">
+    <b>Kolesterol Tinggi</b><br>
+    Kolesterol berlebih dapat menyebabkan penumpukan plak pada pembuluh darah.
+    </div>
+
+    <div class="risk-card">
+    <b>Diabetes</b><br>
+    Kadar gula darah tinggi dapat merusak pembuluh darah dan meningkatkan risiko penyakit jantung.
+    </div>
+
+    <div class="risk-card">
+    <b>Obesitas</b><br>
+    Berat badan berlebih meningkatkan risiko hipertensi, diabetes, dan kolesterol tinggi.
+    </div>
+
+    <div class="risk-card">
+    <b>Merokok & Kurang Aktivitas Fisik</b><br>
+    Kebiasaan merokok dan kurang olahraga dapat memperburuk kesehatan jantung.
+    </div>
+
+    <div class="risk-card">
+    <b>Riwayat Keluarga</b><br>
+    Faktor genetik dapat meningkatkan kemungkinan terkena penyakit kardiovaskular.
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ================= GEJALA =================
+    st.markdown("""
+    <div class="card">
+
+    <div class="card-title">
+    🚨 Gejala Umum Penyakit Kardiovaskular
+    </div>
+
+    <div class="text">
+    <ul style="line-height:2;">
+    <li>Nyeri dada atau rasa tertekan di dada</li>
+    <li>Sesak napas</li>
+    <li>Detak jantung tidak teratur</li>
+    <li>Mudah lelah</li>
+    <li>Pusing atau kehilangan kesadaran</li>
+    <li>Pembengkakan pada kaki</li>
+    </ul>
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ================= PENCEGAHAN =================
+    st.markdown("""
+    <div class="card">
+
+    <div class="card-title">
+    ✅ Cara Pencegahan
+    </div>
+
+    <div class="prevention">
+    <ul style="line-height:2;">
+    <li>Rutin berolahraga minimal 30 menit setiap hari</li>
+    <li>Mengurangi makanan tinggi garam dan lemak</li>
+    <li>Memperbanyak konsumsi buah dan sayur</li>
+    <li>Berhenti merokok dan menghindari alkohol</li>
+    <li>Menjaga berat badan ideal</li>
+    <li>Melakukan pemeriksaan kesehatan secara berkala</li>
+    </ul>
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+if selected=='💾 Dataset':
+    st.subheader("Dataset Kardiovaskular")
+    dataset = pd.read_csv('Kardio.csv')
+    st.dataframe(dataset)
+    st.download_button("Download Dataset", data='Kardio.csv', file_name="Kardio.csv", type='primary')
+    st.write(f"Akurasi model dataset ini sebesar **{final_accuracy*100:.2f}**%")
+
+if selected=='📊 Visualisasi':
     st.title(':chart_with_upwards_trend: Visualisasi Data ')
     st.header("1. Heatmap Correlation")
-    st.image("image/Heatmap.png", caption="Heatmap Correlation Features")
+    st.image("image/heatmap correlation.png", caption="Heatmap Correlation Features")
+    st.header("2. Distribusi Target")
+    st.image("image/distribusi kardio.png", caption="Heatmap Correlation Features")
+    st.header("3. Distribusi Usia")
+    st.image("image/distribusi usia.png", caption="Heatmap Correlation Features")
+    st.header("4. Feature Importances")
+    st.image("image/feature importances.png", caption="Heatmap Correlation Features")
 
     
 #Membuat Halaman Prediksi
-if selected=='Prediksi':
+if selected=='🩺 Prediksi':
     st.header(" :clipboard: Cek Risiko Kamu Terkena Penyakit Kardiovaskular")
     col1, col2, col3 = st.columns([2,1,1])
     col4, col5, col6, col7 = st.columns(4)
-    jk = ("Perempuan", "Laki-laki")
+    jk = ("Laki-laki", "Perempuan")
     option = ("Tidak", "Iya")
     options = list(range(len(jk)))
     with col1:
@@ -114,7 +512,7 @@ if selected=='Prediksi':
         umur = st.text_input("Umur Anda", calculate_age(born), disabled=True)
         umur = int(umur)
     with col4:
-        jenis_kelamin = st.selectbox("Jenis Kelamin", options, format_func=lambda x: jk[x])
+        jk = st.selectbox("Jenis Kelamin", options, format_func=lambda x: jk[x])
         tinggi_badan = st.number_input("Tinggi Badan",value=None, min_value=125,max_value=565,step=1, placeholder="(cm)")
         berat_badan=st.number_input("Berat Badan",value=None, min_value=40,max_value=150,step=1, placeholder="(kg)")
         st.write(' ')
@@ -128,25 +526,42 @@ if selected=='Prediksi':
     with col7:
         merokok = st.selectbox("Merokok", options, format_func=lambda x: option[x])
         olahraga = st.selectbox("Olahraga", options, format_func=lambda x: option[x])
-    #Membuat Prediksi Pada Masukan
-    input_data = (umur,jenis_kelamin,tinggi_badan,berat_badan,sistolik,diastolik,kolesterol,diabetes,riwayat,merokok,olahraga)
-    print(input_data)
-    input_data_as_numpy_array = np.array(input_data) 
-    input_data_reshape = input_data_as_numpy_array.reshape(1,-1)
-    prediksi = model.predict(input_data_reshape)
-    print(prediksi)
-    probabilitas = model.predict_proba(input_data_reshape)
-    print("Probabilitas:", probabilitas)
+    new_data_input = {
+        'umur': [umur],
+        'jk': [jk],
+        'tinggi': [tinggi_badan],
+        'berat': [berat_badan],
+        'sistolik': [sistolik],
+        'diastolik': [diastolik],
+        'kolesterol': [kolesterol],
+        'diabetes': [diabetes],
+        'riwayat': [riwayat],
+        'merokok': [merokok],
+        'olahraga': [olahraga]
+    }
+    # Data asli untuk prediksi
+    new_data_df = pd.DataFrame(new_data_input)
+    prediksi = model.predict(new_data_df)
+    prediksi_proba = model.predict_proba(new_data_df)
+    
+    print("\nPrediksi untuk data baru:")
 
-    # Menampilkan lebih jelas
-    print(f"Probabilitas Tidak: {probabilitas[0][0]:.4f}")
-    print(f"Probabilitas Iya  : {probabilitas[0][1]:.4f}")
+    if prediksi[0] == 1:
+        print("Pasien ini diprediksi memiliki risiko TINGGI terkena penyakit kardiovaskular")
+    else:
+        print("Pasien ini diprediksi memiliki risiko RENDAH penyakit kardiovaskular")
+
+    print("\nProbabilitas:")
+    print(f"Tidak Kardio : {prediksi_proba[0][0]*100:.2f}%")
+    print(f"Kardio       : {prediksi_proba[0][1]*100:.2f}%")
+
+
     status = ''
     if st.button("Prediksi", type="primary"):
-        if(jenis_kelamin==1):
-            jenis_kelamin = "Laki-laki"
+        if(jk==1):
+            jk = "Laki-laki"
         else:
-            jenis_kelamin = "Perempuan"
+            jk = "Perempuan"
         if(kolesterol==1):
             kolesterol = "Iya"
         else:
@@ -173,11 +588,25 @@ if selected=='Prediksi':
             status = "Risiko Tinggi"
             with st.spinner('Sedang Memprediksi...'):
                 time.sleep(3)
-            st.subheader("Hasil Prediksi :")
-            st.error("Kamu berisiko tinggi terkena penyakit kardiovaskular", icon='🚨')
+            st.subheader("🩺 Hasil Prediksi :")
+            st.error("Kamu berisiko TINGGI terkena penyakit kardiovaskular", icon='🚨')
+            st.write("### 📈 **Probabilitas Risiko**")
+            # HTML dan CSS Kustom untuk kartu probabilitas
+            st.markdown(f"""
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <div style="background-color: #FFEBEE; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #C62828; ">
+                    <p style="margin: 0; color: #C62828; font-weight: bold; font-size: 14px;">RISIKO TINGGI</p>
+                    <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #B71C1C; ">{prediksi_proba[0][1]*100:.2f}%</p>
+                </div>
+                <div style="background-color: #E8F5E9; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #2E7D32;">
+                    <p style="margin: 0; color: #2E7D32; font-weight: bold; font-size: 14px;">RISIKO RENDAH</p>
+                    <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #1B5E20;">{prediksi_proba[0][0]*100:.2f}%</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jk":jk, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
             st.dataframe(df, use_container_width=True)
@@ -185,18 +614,51 @@ if selected=='Prediksi':
             status = "Risiko Rendah"
             with st.spinner('Sedang Memprediksi...'):
                 time.sleep(3)
-            st.subheader("Hasil Prediksi :")
-            st.success("Kamu berisiko rendah terkena penyakit kardiovaskular", icon='💚')
+            st.subheader("🩺 Hasil Prediksi :")
+            st.success("Kamu berisiko RENDAH terkena penyakit kardiovaskular", icon='💚')
+            st.write("### 📈 **Probabilitas Risiko**")
+            # HTML dan CSS Kustom untuk kartu probabilitas
+            st.markdown(f"""
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <div style="background-color: #E8F5E9; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #2E7D32;">
+                    <p style="margin: 0; color: #2E7D32; font-weight: bold; font-size: 14px;">RISIKO RENDAH</p>
+                    <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #1B5E20;">{prediksi_proba[0][0]*100:.2f}%</p>
+                </div>
+                <div style="background-color: #FFEBEE; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #C62828;">
+                    <p style="margin: 0; color: #C62828; font-weight: bold; font-size: 14px;">RISIKO TINGGI</p>
+                    <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #B71C1C;">{prediksi_proba[0][1]*100:.2f}%</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jenis_kelamin, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jk":jk, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
             st.dataframe(df, use_container_width=True)
-        
 
-#Membuat Halaman About
-if selected=='Tentang Kami':
-    st.title("Selamat Datang Di Website Cardiovascular Care")
-    st.write("This is About Page")
-    st.balloons()
+# --- KODE FOOTER ---
+footer = """
+<style>
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+    color: #333333;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+.footer p{
+    font-size: 16px;
+    text-align: center;
+}
+</style>
+<div class="footer">
+    <p>Dibuat dengan ❤️ menggunakan Streamlit | © 2026</p>
+</div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
