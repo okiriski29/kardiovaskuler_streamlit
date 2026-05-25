@@ -28,7 +28,7 @@ if selected=='🏠 Beranda':
 
     # 1. Ringkasan Pengantar (Hero Section)
     st.markdown("""
-    Sistem berbasis kecerdasan buatan (*Machine Learning*) ini dirancang untuk membantu Anda 
+    Sistem berbasis Pembelajaran Mesin (*Machine Learning*) ini dirancang untuk membantu Anda 
     melakukan deteksi dini dan penilaian mandiri terhadap risiko penyakit kardiovaskular (jantung dan pembuluh darah). 
     Sistem bekerja dengan menganalisis kombinasi data kesehatan, seperti tekanan darah, kadar kolesterol, gula darah, 
     riwayat penyakit keluarga, serta pola gaya hidup sehari-hari, termasuk aktivitas fisik dan kebiasaan merokok. 
@@ -37,14 +37,15 @@ if selected=='🏠 Beranda':
     st.markdown("""
     <style>
     .metric-container{
-    display:flex;
-    gap:20px;
-    margin-top:20px;
-    margin-bottom:25px;
+        display:flex;
+        gap:20px;
+        margin-top:20px;
+        margin-bottom:25px;
+        flex-wrap:wrap;
     }
 
     .metric-card{
-        flex:1;
+        flex:1 1 300px;
         background: linear-gradient(135deg,#0F4C81,#1F78D1);
         padding:35px 25px;
         border-radius:25px;
@@ -112,7 +113,7 @@ if selected=='🏠 Beranda':
         <div class="metric-value">0</div>
         <div class="metric-title">Deteksi Dini</div>
         <div class="metric-desc">
-            Tidak Adanya Fasilitas Deteksi Dini Penyakit Kardiovaskular pada Masyarakat
+            Tidak Adanya Fasilitas Deteksi Dini Penyakit Kardiovaskular Yang Diberikan Kepada Masyarakat
         </div>
     </div>
 
@@ -229,15 +230,6 @@ if selected=='📖 Informasi':
         border-radius:15px;
         border-left:7px solid red;
         margin-top:20px;
-    }
-
-    .footer{
-        background:#E8F4FF;
-        padding:18px;
-        border-radius:15px;
-        margin-top:25px;
-        font-size:16px;
-        color:#333;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -606,10 +598,27 @@ if selected=='🩺 Prediksi':
             """, unsafe_allow_html=True)
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jk":jk, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jk, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
-            st.dataframe(df, use_container_width=True)
+            # Styling warna berdasarkan hasil
+            def highlight_hasil(val):
+                if val == "Risiko Tinggi":
+                    return "background-color: #ff4b4b; color: white;"
+                elif val == "Risiko Rendah":
+                    return "background-color: #28a745; color: white;"
+                return ""
+
+            styled_df = df.style.map(
+                highlight_hasil,
+                subset=["hasil"]
+            )
+
+            st.dataframe(
+                styled_df,
+                use_container_width=True,
+                hide_index=True
+            )
         elif (prediksi)==0:
             status = "Risiko Rendah"
             with st.spinner('Sedang Memprediksi...'):
@@ -619,7 +628,7 @@ if selected=='🩺 Prediksi':
             st.write("### 📈 **Probabilitas Risiko**")
             # HTML dan CSS Kustom untuk kartu probabilitas
             st.markdown(f"""
-            <div style="display: flex; gap: 15px; margin-top: 10px;">
+            <div style="display: flex; gap: 15px; margin: 15px 0px;">
                 <div style="background-color: #E8F5E9; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #2E7D32;">
                     <p style="margin: 0; color: #2E7D32; font-weight: bold; font-size: 14px;">RISIKO RENDAH</p>
                     <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #1B5E20;">{prediksi_proba[0][0]*100:.2f}%</p>
@@ -633,32 +642,47 @@ if selected=='🩺 Prediksi':
 
             df = pd.DataFrame(
             [
-                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jk":jk, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
+                {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jk, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
             ]
             )
-            st.dataframe(df, use_container_width=True)
+            # Styling warna berdasarkan hasil
+            def highlight_hasil(val):
+                if val == "Risiko Tinggi":
+                    return "background-color: #ff4b4b; color: white;"
+                elif val == "Risiko Rendah":
+                    return "background-color: #28a745; color: white;"
+                return ""
+
+            styled_df = df.style.map(
+                highlight_hasil,
+                subset=["hasil"]
+            )
+
+            st.dataframe(
+                styled_df,
+                use_container_width=True,
+                hide_index=True
+            )
 
 # --- KODE FOOTER ---
 footer = """
 <style>
 .footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
     width: 100%;
     background-color: #f1f1f1;
     color: #333333;
     text-align: center;
-    padding: 10px;
+    padding: 20px;
     font-size: 14px;
 }
 .footer p{
     font-size: 16px;
     text-align: center;
+    margin-bottom:0;
 }
 </style>
 <div class="footer">
-    <p>Dibuat dengan ❤️ menggunakan Streamlit | © 2026</p>
+    <p>Cardiovascular Care ❤️ Mencegah Lebih Baik Daripada Mengobati | © 2026</p>
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)
