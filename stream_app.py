@@ -596,6 +596,7 @@ if selected=='🩺 Prediksi':
                 </div>
             </div>
             """, unsafe_allow_html=True)
+            st.write("### 📋 **Tabel Rangkuman Data Pasien**")
             df = pd.DataFrame(
             [
                 {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jk, "sistolik":sistolik, "diastolik":diastolik,  "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
@@ -639,7 +640,7 @@ if selected=='🩺 Prediksi':
                 </div>
             </div>
             """, unsafe_allow_html=True)
-
+            st.write("### 📋 **Tabel Rangkuman Data Pasien**")
             df = pd.DataFrame(
             [
                 {"waktu":current_time, "nama":nama, "umur":umur, "tinggi_badan":tinggi_badan, "berat_badan":berat_badan , "jenis_kelamin":jk, "sistolik":sistolik, "diastolik":diastolik, "kolesterol": kolesterol, "diabetes": diabetes, "riwayat":riwayat, "merokok": merokok, "olahraga":olahraga, "hasil": status}
