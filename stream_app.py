@@ -585,7 +585,7 @@ if selected=='🩺 Prediksi':
             st.write("### 📈 **Probabilitas Risiko**")
             # HTML dan CSS Kustom untuk kartu probabilitas
             st.markdown(f"""
-            <div style="display: flex; gap: 15px; margin-top: 10px;">
+            <div style="display: flex; gap: 15px; margin: 15px 0px;">
                 <div style="background-color: #FFEBEE; padding: 20px; border-radius: 10px; flex: 1; border-left: 5px solid #C62828; ">
                     <p style="margin: 0; color: #C62828; font-weight: bold; font-size: 14px;">RISIKO TINGGI</p>
                     <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #B71C1C; ">{prediksi_proba[0][1]*100:.2f}%</p>
