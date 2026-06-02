@@ -483,6 +483,12 @@ if selected=='📊 Visualisasi':
     st.image("image/feature importances.png", caption="Heatmap Correlation Features")
     st.header("5. Confusion Matrix")
     st.image("image/confusion matrix.png", caption="Confusion Matrix")
+    st.header("6. Distribusi Jenis Kelamin")
+    st.image("image/distribusi jk.png", caption="Distribusi Jenis Kelamin")
+    st.header("7. Distribusi Sistolik Pasien Kardio")
+    st.image("image/distribusi sistolik kardio.png", caption="Distribusi Sistolik Pasien Kardio")
+    st.header("8. Distribusi Sistolik Pasien Non Kardio")
+    st.image("image/distribusi sistolik no kardio.png", caption="Distribusi Sistolik Pasien Non Kardio")
     
 #Membuat Halaman Prediksi
 if selected=='🩺 Prediksi':
