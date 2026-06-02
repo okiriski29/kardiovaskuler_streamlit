@@ -481,7 +481,8 @@ if selected=='📊 Visualisasi':
     st.image("image/distribusi usia.png", caption="Heatmap Correlation Features")
     st.header("4. Feature Importances")
     st.image("image/feature importances.png", caption="Heatmap Correlation Features")
-
+    st.header("5. Confusion Matrix")
+    st.image("image/confusion matrix.png", caption="Confusion Matrix")
     
 #Membuat Halaman Prediksi
 if selected=='🩺 Prediksi':
