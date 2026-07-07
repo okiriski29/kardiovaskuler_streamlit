@@ -518,12 +518,12 @@ if selected=='🩺 Prediksi':
     with col5:
         sistolik = st.number_input("Tekanan Sistolik",value=None, min_value=70,max_value=250,step=10, placeholder="(mmHg)")
         diastolik = st.number_input("Tekanan Diastolik",value=None, min_value=40,max_value=160,step=10, placeholder="(mmHg)")
-        kolesterol = st.selectbox("Kolesterol", options, format_func=lambda x: option[x])
+        kolesterol = st.selectbox("Aapakah Anda Penderita Kolesterol Tinggi?", options, format_func=lambda x: option[x])
     with col6:
-        diabetes = st.selectbox("Diabetes", options, format_func=lambda x: option[x])
-        riwayat = st.selectbox("Riwayat Keluarga", options, format_func=lambda x: option[x])
+        diabetes = st.selectbox("Apakah Anda Penderita Diabetes?", options, format_func=lambda x: option[x])
+        riwayat = st.selectbox("Apakah Anda Memiliki Keluarga Yang Terkena Penyakit Kardiovaskular?", options, format_func=lambda x: option[x])
     with col7:
-        merokok = st.selectbox("Merokok", options, format_func=lambda x: option[x])
+        merokok = st.selectbox("Apakah Anda Seorang Perokok?", options, format_func=lambda x: option[x])
         olahraga = st.selectbox("Olahraga", options, format_func=lambda x: option[x])
     new_data_input = {
         'umur': [umur],
